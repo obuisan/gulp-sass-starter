@@ -1,0 +1,32 @@
+{
+  "name": "gulp-sass-starter",
+  "version": "1.0.0",
+  "description": "Gulp + Sass workflow starter",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/obuisan/gulp-sass-starter.git"
+  },
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch"
+  },
+  "keywords": [
+    "gulp",
+    "sass"
+  ],
+  "author": "obuisan",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^6.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sass-glob": "^1.0.9",
+    "gulp-sourcemaps": "^2.6.4"
+  },
+  "dependencies": {
+    "dotenv": "^6.1.0"
+  }
+}

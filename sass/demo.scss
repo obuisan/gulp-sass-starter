@@ -1,0 +1,17 @@
+@import 'variables';
+@import 'layout/*';
+
+body {
+  background-color: $gray-lightest;
+  color: $text-color;
+}
+h1 {
+  color: $brand-primary;
+}
+
+.example {
+  display: grid;
+  transition: all .5s;
+  user-select: none;
+  background: linear-gradient(to bottom, white, black);
+}

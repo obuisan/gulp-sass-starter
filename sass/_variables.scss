@@ -1,0 +1,11 @@
+$brand-primary: red;
+$brand-secondary: blue;
+$text-color: black;
+$gray: grayscale($brand-primary);
+
+$gray-light: lighten($gray,15%);
+$gray-lighter: lighten($gray,30%);
+$gray-lightest: lighten($gray,45%);
+$gray-dark: darken($gray,15%);
+$gray-darker: darken($gray,30%);
+$gray-darkest: darken($gray,45%);
