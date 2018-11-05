@@ -8,23 +8,29 @@ const autoprefixer = require('gulp-autoprefixer');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
 const stylelint = require('gulp-stylelint');
+const runSequence = require('run-sequence');
 
 require('dotenv').load();
-const inputPath = process.env.INPUT_PATH || './sass';
-const outputPath = process.env.OUTPUT_PATH || './css';
-const fixBrowsers = process.env.AUTOPREFIXER_BROWSERS || '>1%';
-const fixGrid = process.env.AUTOPREFIXER_GRID || false;
+const config = {
+  inputPath: process.env.INPUT_PATH || './sass',
+  outputPath: process.env.OUTPUT_PATH || './css',
+  fixBrowsers: process.env.AUTOPREFIXER_BROWSERS || '>1%',
+  fixGrid: process.env.AUTOPREFIXER_GRID || false,
+  stylelint: process.env.SASS_LINT !== 'false'
+};
 
-if (!fs.existsSync(inputPath)) {
-  console.error('Error: Input path '+ inputPath +' doesn\'t exist.');
+if (!fs.existsSync(config.inputPath)) {
+  console.log('Error: Input path ' + config.inputPath + ' doesn\'t exist.');
   process.exit(1);
 }
 
 sass.compiler = require('node-sass');
+runSequence.options.showErrorStackTrace = false;
+runSequence.options.ignoreUndefinedTasks = true;
 
 gulp.task('sass:build', () => {
   let sassTask = (minify = false) => {
-    return gulp.src(inputPath+'/**/*.scss')
+    return gulp.src(config.inputPath + '/**/*.scss')
       .pipe(sourcemaps.init())
       .pipe(sassGlob())
       .pipe(sass({
@@ -32,34 +38,38 @@ gulp.task('sass:build', () => {
         outputStyle: minify ? 'compressed' : 'expanded'
       }).on('error', sass.logError))
       .pipe(autoprefixer({
-        browsers: fixBrowsers,
+        browsers: config.fixBrowsers,
         cascade: !minify,
-        grid: fixGrid
+        grid: config.fixGrid
       }))
-      .pipe(gulpif(minify, rename({suffix: '.min'})))
-      .pipe(sourcemaps.write('.', {addComment: false}))
-      .pipe(gulp.dest(outputPath));
+      .pipe(gulpif(minify, rename({ suffix: '.min' })))
+      .pipe(sourcemaps.write('.', { addComment: false }))
+      .pipe(gulp.dest(config.outputPath));
   };
   sassTask();
   return sassTask(true);
 });
 
-gulp.task('sass:lint', () => {
-  return gulp
-    .src(inputPath+'/**/*.scss')
-    .pipe(stylelint({
-      reporters: [
-        { formatter: 'string', console: true }
-      ]
-    }));
+gulp.task('sass:lint', (callback) => {
+  if (config.stylelint) {
+    return gulp
+      .src(config.inputPath + '/**/*.scss')
+      .pipe(stylelint({
+        reporters: [
+          { formatter: 'string', console: true }
+        ]
+      }));
+  }
+  callback();
 });
 
-gulp.task('default', ['build']);
+gulp.task('default', (callback) => runSequence('build', callback));
 
-gulp.task('build', ['sass:lint'], () => {
-  gulp.start('sass:build');
+gulp.task('build', (callback) => {
+  let sassLintTask = config.stylelint ? 'sass:lint' : null;
+  runSequence(sassLintTask, 'sass:build', callback);
 });
 
 gulp.task('watch', ['sass:build'], () => {
-  gulp.watch(inputPath+'/**/*.scss', ['sass:build']);
+  gulp.watch(config.inputPath + '/**/*.scss', ['sass:build']);
 });
