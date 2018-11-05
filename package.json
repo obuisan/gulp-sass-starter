@@ -1,6 +1,6 @@
 {
   "name": "gulp-sass-starter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gulp + Sass workflow starter",
   "repository": {
     "type": "git",
@@ -12,8 +12,10 @@
     "watch": "gulp watch"
   },
   "keywords": [
+    "autoprefixer",
     "gulp",
-    "sass"
+    "sass",
+    "stylelint"
   ],
   "author": "obuisan",
   "license": "MIT",
@@ -24,7 +26,10 @@
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.2",
     "gulp-sass-glob": "^1.0.9",
-    "gulp-sourcemaps": "^2.6.4"
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-stylelint": "^8.0.0",
+    "stylelint": "^9.7.1",
+    "stylelint-config-standard": "^18.2.0"
   },
   "dependencies": {
     "dotenv": "^6.1.0"

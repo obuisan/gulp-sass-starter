@@ -7,6 +7,7 @@ const sassGlob = require('gulp-sass-glob');
 const autoprefixer = require('gulp-autoprefixer');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const stylelint = require('gulp-stylelint');
 
 require('dotenv').load();
 const inputPath = process.env.INPUT_PATH || './sass';
@@ -21,9 +22,9 @@ if (!fs.existsSync(inputPath)) {
 
 sass.compiler = require('node-sass');
 
-gulp.task('default', function () {
+gulp.task('sass:build', () => {
   let sassTask = (minify = false) => {
-    gulp.src(inputPath+'/**/*.scss')
+    return gulp.src(inputPath+'/**/*.scss')
       .pipe(sourcemaps.init())
       .pipe(sassGlob())
       .pipe(sass({
@@ -40,8 +41,25 @@ gulp.task('default', function () {
       .pipe(gulp.dest(outputPath));
   };
   sassTask();
-  sassTask(true);
+  return sassTask(true);
 });
-gulp.task('watch', function () {
-  gulp.watch(inputPath+'/**/*.scss', ['default']);
+
+gulp.task('sass:lint', () => {
+  return gulp
+    .src(inputPath+'/**/*.scss')
+    .pipe(stylelint({
+      reporters: [
+        { formatter: 'string', console: true }
+      ]
+    }));
+});
+
+gulp.task('default', ['build']);
+
+gulp.task('build', ['sass:lint'], () => {
+  gulp.start('sass:build');
+});
+
+gulp.task('watch', ['sass:build'], () => {
+  gulp.watch(inputPath+'/**/*.scss', ['sass:build']);
 });
